@@ -1,19 +1,24 @@
 package main
 
 import (
-	"my-go-server/handlers"
+	"my-go-server/database"
+	"my-go-server/models"
+	"my-go-server/routes"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/logger"
 )
 
 func main() {
 	app := fiber.New()
 
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.JSON(fiber.Map{"message": "Hello, World!"})
-	})
+	app.Use(logger.New())
 
-	app.Post("/users", handlers.CreateUser)
+	database.Connect()
+
+	database.DB.AutoMigrate(&models.User{})
+
+	routes.SetupUserRoutes(app)
 
 	app.Listen(":3000")
 }
