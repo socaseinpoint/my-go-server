@@ -8,6 +8,7 @@ import (
 	_ "my-go-server/docs" // Генерируемая документация
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	fiberSwagger "github.com/swaggo/fiber-swagger" // Swagger middleware
 )
@@ -23,6 +24,14 @@ func main() {
 
 	// Middleware для логирования
 	app.Use(logger.New())
+
+	// Middleware для CORS
+	app.Use(cors.New(cors.Config{
+		AllowOrigins:     "http://localhost:3000, http://127.0.0.1:3000", // Указываем конкретные источники
+		AllowMethods:     "GET,POST,PUT,DELETE",
+		AllowHeaders:     "Origin, Content-Type, Accept",
+		AllowCredentials: true, // Поддержка credentials
+	}))
 
 	// Swagger UI
 	app.Get("/swagger/*", fiberSwagger.WrapHandler)
